@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gráfico</title>
+  </head>
+  <body>
+    <div>
+      <canvas id="myChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"
+      integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="./data-processing.js"></script>
+    <script>
+      const dataGrouped = sanitizeData();
+      const monthMapping = {
+        2: "Fevereiro",
+        3: "Março",
+        9: "Setembro",
+        10: "Outubro",
+      };
+
+      const availableColors = {
+        "Entre 4 e 10 salários mínimos": "#BD4900",
+        "Entre 10 e 20 salários mínimos": "#F67618",
+        "Até 2 salários mínimos": "#54014F",
+        "Entre 2 e 4 salários mínimos": "#060560",
+        "Acima de 20 salários mínimos": "#145403",
+      };
+
+      const datasets = dataGrouped.map((el) => ({
+        label: el.renda,
+        backgroundColor: availableColors[el.renda],
+        data: el.data.map((el) => ({
+          x: monthMapping[el.mes_reposta],
+          y: el.escolaridade,
+          r: el.quantidade_ocorrencias * 5,
+        })),
+        hoverBorderColor: "black",
+      }));
+
+      const dataConfig = {
+        datasets,
+      };
+
+      const config = {
+        type: "bubble",
+        data: dataConfig,
+        options: {
+          responsive: true,
+          layout: {
+            padding: 40,
+          },
+          plugins: {
+            legend: {
+              position: "top",
+            },
+            title: {
+              display: true,
+              text: "Comparando renda, escolaridade e mês de ocorrência das repostas dos visitantes",
+            },
+          },
+          scales: {
+            y: {
+              type: "category",
+              labels: [
+                "Ensino fundamental incompleto",
+                "Ensino fundamental completo",
+                "Ensino médio incompleto",
+                "Ensino médio completo",
+                "Ensino superior incompleto",
+                "Ensino superior completo",
+                "Pós-graduação",
+              ],
+              ticks: {
+                font: {
+                  size: 16,
+                },
+                padding: 40,
+              },
+            },
+            x: {
+              type: "category",
+              labels: ["Fevereiro", "Março", "Setembro", "Outubro"],
+              ticks: {
+                font: {
+                  size: 16,
+                },
+              },
+            },
+          },
+          title: {
+            display: true,
+            text: "Chart.js Bubble Chart",
+          },
+        },
+      };
+
+      const myChart = new Chart(document.getElementById("myChart"), config);
+    </script>
+  </body>
+</html>
