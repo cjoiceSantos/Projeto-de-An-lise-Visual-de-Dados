@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gráfico</title>
+  </head>
+  <body>
+    <div>
+      <canvas id="myChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"
+      integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="./data-processing.js"></script>
+    <script>
+      const title = "Entre 5 e 10 vezes";
+      const dataGrouped = sanitizeData(title);
+      console.log(dataGrouped);
+      const monthMapping = {
+        2: "Fevereiro",
+        3: "Março",
+        9: "Setembro",
+        10: "Outubro",
+      };
+
+      const availableColors = {
+        "20 a 29 anos": "rgb(160,82,45)",
+        "10 a 14 anos": "rgb(30,144,255)",
+        "15 a 19 anos": "rgb(75,0,130)",
+        "30 a 39 anos": "rgb(0,255,0)",
+        "40 a 49 anos": "rgb(255,127,80)",
+        "50 a 59 anos": "rgb(148,0,211)",
+        "60 a 69 anos": "rgb(178,34,34)",
+        "Maior que 69 anos": "rgb(255,255,0)",
+      };
+
+      const availableStyles = {
+        "20 a 29 anos": "circle",
+        "10 a 14 anos": "triangle",
+        "30 a 39 anos": "star",
+        "15 a 19 anos": "triangle",
+        "40 a 49 anos": "star",
+      };
+
+      const datasets = dataGrouped.map((el) => ({
+        label: el.idade,
+        backgroundColor: availableColors[el.idade],
+        borderColor: availableColors[el.idade],
+        data: el.data.map((item) => item.qtd ?? 0),
+        pointRadius: 10,
+        pointStyle: availableStyles[el.idade],
+      }));
+
+      const labels = ["Fevereiro", "Março", "Setembro", "Outubro"];
+
+      const dataConfig = {
+        labels,
+        datasets,
+      };
+
+      const config = {
+        type: "line",
+        data: dataConfig,
+        options: {
+          responsive: true,
+          interaction: {
+            mode: "index",
+            intersect: false,
+          },
+          stacked: false,
+          plugins: {
+            title: {
+              display: true,
+              text: title,
+            },
+          },
+          scales: {
+            y: {
+              type: "linear",
+              display: true,
+              position: "left",
+            },
+            y1: {
+              type: "linear",
+              display: true,
+              position: "right",
+
+              // grid line settings
+              grid: {
+                drawOnChartArea: false, // only want the grid lines for one axis to show up
+              },
+            },
+          },
+        },
+      };
+
+      const myChart = new Chart(document.getElementById("myChart"), config);
+    </script>
+  </body>
+</html>
